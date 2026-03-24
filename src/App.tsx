@@ -20,6 +20,15 @@ import { grammarData, GrammarSection, GrammarTable, Example, Exercise } from './
 type TitleTag = 'h2' | 'h3';
 type ViewMode = 'learn' | 'trainer';
 
+// --- Utils ---
+const normalizeLatin = (str: string) => {
+  return str
+    .normalize('NFD')
+    .replace(/[\u0304]/g, '')
+    .toLowerCase()
+    .trim();
+};
+
 // --- Components ---
 
 const Table: React.FC<{ table: GrammarTable }> = ({ table }) => (
@@ -80,7 +89,7 @@ const ExerciseCard: React.FC<{ exercise: Exercise; onComplete: (correct: boolean
   const handleSubmit = () => {
     let correct = false;
     if (exercise.type === 'cloze') {
-      correct = clozeValue.trim().toLowerCase() === exercise.correctAnswer.toLowerCase();
+      correct = normalizeLatin(clozeValue) === normalizeLatin(exercise.correctAnswer);
     } else {
       correct = selectedOption === exercise.correctAnswer;
     }
